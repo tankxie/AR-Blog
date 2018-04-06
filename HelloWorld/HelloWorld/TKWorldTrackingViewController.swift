@@ -27,7 +27,8 @@ class TKWorldTrackingViewController: UIViewController,ARSCNViewDelegate {
         super.viewWillAppear(animated)
         
         let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = [.horizontal, .vertical]
+        
+        configuration.planeDetection = [.horizontal, .vertical] // 支持水平和垂直面检测
         configuration.isLightEstimationEnabled = true
         
         sceneView.session.run(configuration)
@@ -44,6 +45,15 @@ class TKWorldTrackingViewController: UIViewController,ARSCNViewDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        // 1. 判断当前新增的锚点类型
+        guard anchor is ARPlaneAnchor else { return }
+        
+        // 2. 在检测到的平面处添加 box
+        let box = SCNBox(width: 0.08, height: 0.08, length: 0.08, chamferRadius: 0)
+        let boxNode = SCNNode(geometry: box)
+        node.addChildNode(boxNode)
+        
+    }
 
 }
