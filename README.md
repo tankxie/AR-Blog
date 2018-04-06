@@ -1,4 +1,5 @@
 > 本篇写一个 AR demo，demo包含三个部分的内容：
+> 
 > - 基于后置摄像头的平面检测
 > - 基于前置摄像头的人脸追踪
 > - 基于ARKit的图像识别
@@ -11,7 +12,7 @@
 
 ![本文内容结构](https://upload-images.jianshu.io/upload_images/1444901-ccc7f1250fe45acb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-[本文源码地址](https://github.com/tankxie/AR-Blog.git)。
+[本文简书地址](https://www.jianshu.com/p/3e96a74a84fd)。
 
 ## 1. 搭建第一个AR项目
 ### 1.1 搭建过程
@@ -38,11 +39,14 @@
 
 Amazing，飞船渲染在我们的真实世界中了，看看是怎么通过代码加载进来的。
 
-1. 查看 main.storyboard，发现系统为我们的 ViewController 实例的 view 添加了一个ARSCNView类型的subview，并将其设置为ViewController的属性。
+**1. 查看 main.storyboard，发现系统为我们的 ViewController 实例的 view 添加了一个ARSCNView类型的subview，并将其设置为ViewController的属性。**
+
+
 ```
     @IBOutlet var sceneView: ARSCNView!
 ```
-2. 查看 ViewController.swift 的 viewDidLoad: 方法：
+
+**2. 查看 ViewController.swift 的 viewDidLoad: 方法：**
  
 ```
 sceneView.delegate = self
@@ -63,7 +67,8 @@ sceneView.scene = scene
 这两行代码从我们资源文件夹 art.scnassets 中读取资源文件 ship.scn ，把这个文件转换为一个名为 scene 的 SCNScene 实例，然后将这个场景设置为 sceneView 的 scene 属性。
 这样我们加载这个包含飞船的场景到真实世界中。
 
-3. 查看 ViewController.swift 的 viewWillAppear: 方法，在视图即将出现的时候，初始化一个 ARWorldTrackingConfiguration 实例 configuration ，然后用这个configuration 运行  ARSession对象。
+**3. 查看 ViewController.swift 的 viewWillAppear: 方法，在视图即将出现的时候，初始化一个 ARWorldTrackingConfiguration 实例 configuration ，然后用这个configuration 运行  ARSession对象。**
+
 
 ```
 // Create a session configuration
@@ -72,7 +77,9 @@ let configuration = ARWorldTrackingConfiguration()
 // Run the view's session
 sceneView.session.run(configuration)
 ```
-4. 查看 ViewController.swift 的 viewWillDisappear:方法，在视图消失的时候，停止这个session，和 `session.run` 成对出现。
+
+**4. 查看 ViewController.swift 的 viewWillDisappear:方法，在视图消失的时候，停止这个session，和 `session.run` 成对出现。**
+
 ```
  // Pause the view's session
  sceneView.session.pause()
@@ -96,6 +103,7 @@ sceneView.session.run(configuration)
 
 ## 2. 开发 World Tracking 功能
 首先在 `TKWorldTrackingViewController` 中引入 ARKit。
+
 ```
 import ARKit
 ```
@@ -105,6 +113,7 @@ import ARKit
     var sceneView : SCNView!
 ```
 在 `viewDidLoad:` 中初始化 sceneView，并作为 subview 添加到view上。
+
 ```
  override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,6 +124,7 @@ import ARKit
     }
 ```
 sceneView 已经初始化完成，现在需要运行 sceneView 的 AR会话，我们希望在 当前 view 出现的时候运行会话。在 `viewWillAppear:`中创建一个`ARWorldTrackingConfiguration` 实例 configuration ，然后用 configuration 运行 AR session。
+
 ```
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -125,6 +135,7 @@ sceneView 已经初始化完成，现在需要运行 sceneView 的 AR会话，�
     }
 ```
 在当前 view 消失的时候，在`viewWillDisappear:`中停止AR session。
+
 ```
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -141,14 +152,17 @@ sceneView 已经初始化完成，现在需要运行 sceneView 的 AR会话，�
 - 判断新添加锚点的类型，如果是 ARPlaneAnchor 类型，就认为检测到平面了
 
 让 `TKWorldTrackingViewController` 遵守 `ARSCNViewDelegate`。
+
 ```
 class TKWorldTrackingViewController: UIViewController,ARSCNViewDelegate
 ```
 然后在`viewDidLoad:`中添加如下代码：
+
 ```
 sceneView.delegate = self
 ```
 并实现代理方法，判断当前新增的锚点类型，如果是 ARPlaneAnchor，就在当前锚点出添加一个 box。
+
 ```
 func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
      // 1. 判断当前新增的锚点类型
@@ -231,6 +245,7 @@ TKImageRecognizeViewController 中引入 ARKit、添加 sceneView 属性、在 v
         }
 ```
 接着，新建一个ARWorldTrackingConfiguration实例，将 referenceImages 赋给 `detectionImages `属性。
+
 ```
         let configuration = ARWorldTrackingConfiguration()
         configuration.detectionImages = referenceImages
